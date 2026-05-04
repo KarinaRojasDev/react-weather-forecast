@@ -1,0 +1,62 @@
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.header {
+    margin-bottom: 10px;
+}
+
+.date {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.hoursList {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.hourItem {
+    list-style: none;
+}
+
+.hourCard {
+    min-width: 120px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.time {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.temp {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.state {
+    font-size: 12px;
+    color: var(--text-soft);
+}
+
+.icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+}
