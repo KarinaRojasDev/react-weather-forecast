@@ -1,5 +1,9 @@
 # 🌤️ Weather Info App
 
+## 🌐 Live Demo
+
+https://weather-info-karina-dev.netlify.app
+
 ![Weather App](./public/images/weather-app.png)
 
 ---
