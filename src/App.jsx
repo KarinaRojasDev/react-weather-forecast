@@ -1,120 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect,useState } from 'react'
+import SearchForm from "./components/SearchForm/SearchForm"
+import WeatherList from "./components/WeatherList/WeatherList";
+import axios from "axios"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [city, setCity] = useState("");
+  const [weatherData, setWeatherData] = useState([]);
+
+  const apiKey = import.meta.env.VITE_API_KEY;
+
+useEffect(() => {
+
+  const handleSuccess = async (position) => {
+      const { latitude, longitude } = position.coords; 
+      
+      try {
+        
+        const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`);
+
+        const data = response.data;
+
+        //  establecemos ciudad 
+        setCity(data.name);
+
+      } catch (error) {
+        console.log(error);
+        setCity("Madrid");
+      }
+    };
+      
+    // si no acepta permisos
+    const handleError = () => {
+      setCity("Madrid"); 
+    };
+
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+
+}, []);
+
+useEffect(() => {
+  if (!city) return;
+
+  const getWeather = async ()=>{
+    try{
+      // Petición a la API con la ciudad actual
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+
+      const data = response.data;
+
+      // Creamos un objeto para agrupar por día
+      const group = data.list.reduce((acc,item) => {
+
+        // Extraemos solo la fecha (sin la hora)
+        const date = item.dt_txt.split(" ")[0];
+
+        // Si esa fecha no existe en el objeto, la creamos
+        if(!acc[date]){
+          acc[date] = [];
+        }
+
+        // Añadimos el item a ese día
+        acc[date].push(item);
+        return acc;
+
+      }, {});
+
+      // Convertimos el objeto en array
+      const weatherDay = Object.keys(group).map(date => ({
+        date,
+        hours: group[date]
+      }));
+
+      setWeatherData(weatherDay);
+    
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  getWeather();
+
+},[city, apiKey]);
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <SearchForm city={city} setCity={setCity}/>
+      <WeatherList weatherData={weatherData} />
     </>
   )
 }
