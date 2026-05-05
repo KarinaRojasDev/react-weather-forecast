@@ -1,3 +1,5 @@
+import styles from "./SearchForm.module.css";
+
 const SearchForm = ({city,setCity})=> {
   
   const handleSubmit = (e) => {
@@ -6,10 +8,11 @@ const SearchForm = ({city,setCity})=> {
     };
 
     return (
-    <form onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit}>
 
       <label htmlFor="city">Ciudad</label>
       <input
+        className={styles.input}
         id="city"
         type="text"
         value={city}
@@ -17,7 +20,7 @@ const SearchForm = ({city,setCity})=> {
         onChange={(e) =>setCity(e.target.value)} 
       />
 
-      <button type="submit">Buscar</button>
+      <button  className={styles.button} type="submit">Buscar</button>
 
     </form>
   );

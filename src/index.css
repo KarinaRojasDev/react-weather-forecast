@@ -25,6 +25,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  padding: 12px;
 }
 
 h1,
@@ -39,4 +40,18 @@ p {
 
 button {
   font-family: inherit;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  body {
+    padding: 24px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  body {
+    padding: 40px;
+  }
 }

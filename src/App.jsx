@@ -1,7 +1,7 @@
 import { useEffect,useState } from 'react'
 import SearchForm from "./components/SearchForm/SearchForm"
 import WeatherList from "./components/WeatherList/WeatherList";
-import './App.css'
+import axios from "axios"
 
 function App() {
   const [city, setCity] = useState("");
@@ -16,9 +16,9 @@ useEffect(() => {
       
       try {
         
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`);
+        const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`);
 
-        const data = await response.json();
+        const data = response.data;
 
         //  establecemos ciudad 
         setCity(data.name);
@@ -39,12 +39,14 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
+  if (!city) return;
+
   const getWeather = async ()=>{
     try{
       // Petición a la API con la ciudad actual
-      const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
 
-      const data = await response.json();
+      const data = response.data;
 
       // Creamos un objeto para agrupar por día
       const group = data.list.reduce((acc,item) => {
